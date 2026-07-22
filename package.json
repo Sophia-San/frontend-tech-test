@@ -20,7 +20,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --write --ignore-path .gitignore .",
+    "prepare": "husky"
   },
   "engines": {
     "node": "20.19.6",
@@ -41,7 +43,9 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "prettier": "^3.9.6",
     "sass": "^1.93.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.65.0",
