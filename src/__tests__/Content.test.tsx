@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import { delay, http, HttpResponse } from "msw";
+import { http, HttpResponse } from "msw";
 
 import { server } from "../__mocks/server";
 import { allCharacters } from "../__mocks/data";
@@ -33,6 +33,45 @@ describe("Content", () => {
     expect(
       screen.getByRole("heading", { name: allCharacters[0].name }),
     ).toBeInTheDocument();
+  });
+
+  it("should replace the skeleton placeholders with the real characters once they resolve", async () => {
+    let resolveCharacters: () => void;
+    const charactersGate = new Promise<void>((resolve) => {
+      resolveCharacters = resolve;
+    });
+
+    server.use(
+      http.get("/api/characters", async () => {
+        await charactersGate;
+        return HttpResponse.json({
+          results: allCharacters.slice(0, 4),
+          total: allCharacters.length,
+          page: 1,
+          limit: 4,
+          next: null,
+          previous: null,
+        });
+      }),
+    );
+
+    const { container } = render(
+      <Content name="" page={1} pageSize={4} onPageChange={noop} />,
+    );
+
+    expect(
+      container.querySelectorAll('li > article[aria-hidden="true"]'),
+    ).toHaveLength(4);
+
+    resolveCharacters!();
+
+    await waitFor(() =>
+      expect(
+        container.querySelectorAll('li > article[aria-hidden="true"]'),
+      ).toHaveLength(0),
+    );
+
+    expect(screen.getAllByRole("heading")).toHaveLength(4);
   });
 
   it("should show an error message when the request fails", async () => {
@@ -103,9 +142,14 @@ describe("Content", () => {
   });
 
   it("should show reaction placeholders until reactions resolve, without blocking the character list", async () => {
+    let resolveReactions: () => void;
+    const reactionsGate = new Promise<void>((resolve) => {
+      resolveReactions = resolve;
+    });
+
     server.use(
       http.get("/api/reactions", async () => {
-        await delay(50);
+        await reactionsGate;
         return HttpResponse.json({ reactions: [] });
       }),
     );
@@ -121,12 +165,14 @@ describe("Content", () => {
     );
 
     expect(
-      container.querySelectorAll(".lumx-skeleton-rectangle"),
+      container.querySelectorAll('ul[aria-hidden="true"] > li'),
     ).not.toHaveLength(0);
+
+    resolveReactions!();
 
     await waitFor(() =>
       expect(
-        container.querySelectorAll(".lumx-skeleton-rectangle"),
+        container.querySelectorAll('ul[aria-hidden="true"] > li'),
       ).toHaveLength(0),
     );
   });

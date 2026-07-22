@@ -105,8 +105,8 @@ describe("CharacterCard", () => {
       screen.queryByRole("list", { name: "Han Solo's reactions" }),
     ).not.toBeInTheDocument();
     expect(screen.queryByText("⭐")).not.toBeInTheDocument();
-    expect(container.querySelectorAll(".lumx-skeleton-rectangle")).toHaveLength(
-      2,
-    );
+    expect(
+      container.querySelectorAll('ul[aria-hidden="true"] > li'),
+    ).toHaveLength(2);
   });
 });
