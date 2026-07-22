@@ -3,7 +3,7 @@ import { http, HttpResponse } from "msw";
 
 import { server } from "../__mocks/server";
 import { allCharacters, allReactions } from "../__mocks/data";
-import { getCharacters, getReactions } from ".";
+import { getCharacters, getReactions } from "../api";
 
 describe("getCharacters", () => {
   it("should return every character when called without params", async () => {

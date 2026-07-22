@@ -1,21 +1,15 @@
-import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from 'react-router-dom';
+import { Header } from "../Header";
+import { Content } from "../Content";
 
-import { Header } from '../Header';
-import { Content } from '../Content';
-
-export const App: React.FC = () => {
+export const App = () => {
   return (
     <Router>
-			<Header />
-			<Routes>
-				<Route path="/" element={<Content />} />
-			</Routes>
-		</Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Content />} />
+      </Routes>
+    </Router>
   );
-}
+};
