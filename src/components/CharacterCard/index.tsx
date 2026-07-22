@@ -57,10 +57,7 @@ export const CharacterCard = ({
           </ul>
         ) : (
           reactions.length > 0 && (
-            <ul
-              className={styles.reactions}
-              aria-label={`${name}'s reactions`}
-            >
+            <ul className={styles.reactions} aria-label={`${name}'s reactions`}>
               {reactions.map((reaction) => (
                 <li key={reaction.id} className={styles.reaction}>
                   <span aria-hidden="true">{reaction.content}</span>

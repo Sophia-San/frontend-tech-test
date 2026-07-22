@@ -133,10 +133,7 @@ describe("Content", () => {
 
   it("should show an error message when reactions fail to load, without blocking the character list", async () => {
     server.use(
-      http.get(
-        "/api/reactions",
-        () => new HttpResponse(null, { status: 500 }),
-      ),
+      http.get("/api/reactions", () => new HttpResponse(null, { status: 500 })),
     );
 
     render(<Content name="" page={1} pageSize={4} onPageChange={noop} />);
