@@ -1,12 +1,13 @@
-import { Character } from "../../types/character";
+import { Character, Reaction } from "../../types/character";
 
 import styles from "./CharacterCard.module.scss";
 
 interface CharacterCardProps {
   character: Character;
+  reactions: Reaction[];
 }
 
-export const CharacterCard = ({ character }: CharacterCardProps) => {
+export const CharacterCard = ({ character, reactions }: CharacterCardProps) => {
   const { name, description, species, birthYear, affiliations, imageUrl } =
     character;
 
@@ -34,6 +35,16 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
             {affiliations.map((affiliation) => (
               <li key={affiliation} className={styles.affiliationTag}>
                 {affiliation}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {reactions.length > 0 && (
+          <ul className={styles.reactions} aria-label={`${name}'s reactions`}>
+            {reactions.map((reaction) => (
+              <li key={reaction.id} className={styles.reaction}>
+                <span aria-hidden="true">{reaction.content}</span>
               </li>
             ))}
           </ul>

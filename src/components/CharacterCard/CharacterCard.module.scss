@@ -80,3 +80,22 @@
   font-weight: 600;
   text-transform: uppercase;
 }
+
+.reactions {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reaction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  font-size: 16px;
+}

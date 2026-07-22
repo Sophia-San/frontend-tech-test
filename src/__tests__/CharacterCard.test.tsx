@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import { Character } from "../types/character";
+import { Character, Reaction } from "../types/character";
 import { CharacterCard } from "../components/CharacterCard";
 
 const baseCharacter: Character = {
@@ -14,9 +14,14 @@ const baseCharacter: Character = {
   affiliations: ["Rebel Alliance", "Resistance"],
 };
 
+const reactions: Reaction[] = [
+  { id: "1", content: "⭐", characterId: 1, deleted: false },
+  { id: "2", content: "🚀", characterId: 1, deleted: false },
+];
+
 describe("CharacterCard", () => {
   it("should render the character name, species, birth year and description", () => {
-    render(<CharacterCard character={baseCharacter} />);
+    render(<CharacterCard character={baseCharacter} reactions={[]} />);
 
     expect(
       screen.getByRole("heading", { name: "Han Solo" }),
@@ -29,14 +34,16 @@ describe("CharacterCard", () => {
   });
 
   it("should render every affiliation", () => {
-    render(<CharacterCard character={baseCharacter} />);
+    render(<CharacterCard character={baseCharacter} reactions={[]} />);
 
     expect(screen.getByText("Rebel Alliance")).toBeInTheDocument();
     expect(screen.getByText("Resistance")).toBeInTheDocument();
   });
 
   it("should render the character image when imageUrl is provided", () => {
-    const { container } = render(<CharacterCard character={baseCharacter} />);
+    const { container } = render(
+      <CharacterCard character={baseCharacter} reactions={[]} />,
+    );
 
     // alt="" makes the image decorative, so it's intentionally excluded from the
     // accessibility tree (no img role) — query the DOM directly instead.
@@ -46,7 +53,10 @@ describe("CharacterCard", () => {
 
   it("should not render an img when imageUrl is missing", () => {
     const { container } = render(
-      <CharacterCard character={{ ...baseCharacter, imageUrl: undefined }} />,
+      <CharacterCard
+        character={{ ...baseCharacter, imageUrl: undefined }}
+        reactions={[]}
+      />,
     );
 
     expect(container.querySelector("img")).not.toBeInTheDocument();
@@ -56,11 +66,29 @@ describe("CharacterCard", () => {
     render(
       <CharacterCard
         character={{ id: 2, name: "Count Dooku", affiliations: [] }}
+        reactions={[]}
       />,
     );
 
     expect(
       screen.getByRole("heading", { name: "Count Dooku" }),
     ).toBeInTheDocument();
+  });
+
+  it("should render every reaction", () => {
+    render(<CharacterCard character={baseCharacter} reactions={reactions} />);
+
+    const list = screen.getByRole("list", { name: "Han Solo's reactions" });
+    expect(list).toBeInTheDocument();
+    expect(screen.getByText("⭐")).toBeInTheDocument();
+    expect(screen.getByText("🚀")).toBeInTheDocument();
+  });
+
+  it("should not render a reactions list when there are none", () => {
+    render(<CharacterCard character={baseCharacter} reactions={[]} />);
+
+    expect(
+      screen.queryByRole("list", { name: "Han Solo's reactions" }),
+    ).not.toBeInTheDocument();
   });
 });

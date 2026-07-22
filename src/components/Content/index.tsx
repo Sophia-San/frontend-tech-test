@@ -1,4 +1,6 @@
 import { useCharacters } from "../../hooks/useCharacters";
+import { useReactions } from "../../hooks/useReactions";
+import { Reaction } from "../../types/character";
 import { CharacterCard } from "../CharacterCard";
 import { CharacterCardSkeleton } from "../CharacterCardSkeleton";
 import { Pagination } from "../Pagination";
@@ -12,53 +14,73 @@ interface ContentProps {
   onPageChange: (page: number) => void;
 }
 
+const NO_REACTIONS: Reaction[] = [];
+
 export const Content = ({
   name,
   page,
   pageSize,
   onPageChange,
 }: ContentProps) => {
-  const result = useCharacters({ name, page, pageSize });
+  const charactersResult = useCharacters({ name, page, pageSize });
+  const reactionsResult = useReactions();
+
+  const { status: charactersStatus } = charactersResult;
+  const isCharactersLoading = charactersStatus === "loading";
+  const isCharactersError = charactersStatus === "error";
+  const {
+    characters = [],
+    total = 0,
+    totalPages = 0,
+  } = charactersStatus === "success" ? charactersResult : {};
+  const { reactionsByCharacterId = null } =
+    reactionsResult.status === "success" ? reactionsResult : {};
 
   return (
     <section className={`${styles.content} lumx-spacing-padding-huge`}>
       <div aria-live="polite">
-        {result.status === "loading" && (
+        {isCharactersLoading && (
           <p className="visually-hidden">Loading characters…</p>
         )}
-        {result.status === "error" && (
+        {isCharactersError && (
           <p role="alert">Something went wrong while loading characters.</p>
         )}
-        {result.status === "success" && result.characters.length === 0 && (
-          <p>No character matches your search.</p>
-        )}
-        {result.status === "success" && result.characters.length > 0 && (
-          <p>
-            {result.total} {result.total > 1 ? "results" : "result"} found
-          </p>
-        )}
+        {!isCharactersLoading &&
+          !isCharactersError &&
+          characters.length === 0 && <p>No character matches your search.</p>}
+        {!isCharactersLoading &&
+          !isCharactersError &&
+          characters.length > 0 && (
+            <p>
+              {total} {total > 1 ? "results" : "result"} found
+            </p>
+          )}
       </div>
 
       <ul className={styles.list}>
-        {result.status === "loading" &&
+        {isCharactersLoading &&
           Array.from({ length: pageSize }, (_, index) => (
             <li key={index}>
               <CharacterCardSkeleton />
             </li>
           ))}
 
-        {result.status === "success" &&
-          result.characters.map((character) => (
-            <li key={character.id}>
-              <CharacterCard character={character} />
-            </li>
-          ))}
+        {characters.map((character) => (
+          <li key={character.id}>
+            <CharacterCard
+              character={character}
+              reactions={
+                reactionsByCharacterId?.get(character.id) ?? NO_REACTIONS
+              }
+            />
+          </li>
+        ))}
       </ul>
 
-      {result.status === "success" && result.totalPages > 1 && (
+      {totalPages > 1 && (
         <Pagination
           page={page}
-          totalPages={result.totalPages}
+          totalPages={totalPages}
           onPageChange={onPageChange}
         />
       )}
