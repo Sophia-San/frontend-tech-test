@@ -9,5 +9,15 @@ $text-color: white;
 
   .logo img {
     height: 100px;
+
+    @media (max-width: 600px) {
+      height: 56px;
+    }
+  }
+}
+
+.search {
+  @media (max-width: 600px) {
+    width: 100%;
   }
 }

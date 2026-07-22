@@ -10,7 +10,7 @@ export const handlers = [
     if (searchName) {
       const lowerSearchName = searchName.toLowerCase();
       filteredData = allCharacters.filter((character) =>
-        character.name.toLowerCase().includes(lowerSearchName),
+        character.name.toLowerCase().startsWith(lowerSearchName),
       );
     }
 

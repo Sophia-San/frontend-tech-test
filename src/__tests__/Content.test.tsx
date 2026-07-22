@@ -102,6 +102,16 @@ describe("Content", () => {
     );
   });
 
+  it("should attach the matching reactions to each character", async () => {
+    render(<Content name="" page={1} pageSize={4} onPageChange={noop} />);
+
+    const reactionsList = await screen.findByRole("list", {
+      name: `${allCharacters[0].name}'s reactions`,
+    });
+
+    expect(reactionsList).toHaveTextContent("⭐");
+  });
+
   it("should not show pagination when every character fits on one page", async () => {
     render(
       <Content

@@ -41,7 +41,7 @@ describe("useCharacters", () => {
     if (result.current.status === "success") {
       expect(result.current.characters).toEqual(
         allCharacters.filter((character) =>
-          character.name.toLowerCase().includes("han"),
+          character.name.toLowerCase().startsWith("han"),
         ),
       );
     }

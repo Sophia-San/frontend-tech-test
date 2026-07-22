@@ -3,12 +3,23 @@
   gap: 24px;
   padding: 24px;
   border-bottom: 1px solid #eee;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
 }
 
 .imageWrapper {
   flex-shrink: 0;
   width: 150px;
   height: 150px;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    height: 200px;
+  }
 }
 
 .image {
@@ -79,4 +90,23 @@
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+.reactions {
+  display: flex;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reaction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  font-size: 16px;
 }
