@@ -53,6 +53,7 @@ export const Header = ({ initialSearch, onSearch }: HeaderProps) => {
         orientation="horizontal"
         vAlign="space-between"
         hAlign="center"
+        wrap
       >
         <Thumbnail
           image={logo}
@@ -61,6 +62,7 @@ export const Header = ({ initialSearch, onSearch }: HeaderProps) => {
         />
 
         <TextField
+          className={styles.search}
           theme={Theme.light}
           icon={mdiMagnify}
           value={value}

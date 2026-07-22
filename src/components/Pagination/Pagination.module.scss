@@ -2,12 +2,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 24px 0;
+
+  @media (max-width: 600px) {
+    gap: 4px;
+    padding: 16px 0;
+  }
 }
 
 .pageButton {
   min-width: 40px;
+
+  @media (max-width: 600px) {
+    min-width: 32px;
+  }
 }
 
 .ellipsis {
