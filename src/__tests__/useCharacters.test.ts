@@ -8,20 +8,63 @@ import { useCharacters } from "../hooks/useCharacters";
 
 describe("useCharacters", () => {
   it("should start in a loading state", () => {
-    const { result } = renderHook(() => useCharacters());
+    const { result } = renderHook(() =>
+      useCharacters({ name: "", page: 1, pageSize: 4 }),
+    );
 
     expect(result.current.status).toBe("loading");
   });
 
-  it("should resolve with every character", async () => {
-    const { result } = renderHook(() => useCharacters());
+  it("should resolve with the requested page of characters", async () => {
+    const { result } = renderHook(() =>
+      useCharacters({ name: "", page: 1, pageSize: 4 }),
+    );
 
     await waitFor(() => expect(result.current.status).toBe("success"));
 
     expect(result.current).toEqual({
       status: "success",
-      characters: allCharacters,
+      characters: allCharacters.slice(0, 4),
+      total: allCharacters.length,
+      totalPages: Math.ceil(allCharacters.length / 4),
     });
+  });
+
+  it("should filter by name", async () => {
+    const { result } = renderHook(() =>
+      useCharacters({ name: "han", page: 1, pageSize: 4 }),
+    );
+
+    await waitFor(() => expect(result.current.status).toBe("success"));
+
+    expect(result.current.status).toBe("success");
+    if (result.current.status === "success") {
+      expect(result.current.characters).toEqual(
+        allCharacters.filter((character) =>
+          character.name.toLowerCase().includes("han"),
+        ),
+      );
+    }
+  });
+
+  it("should go back to loading when params change, then resolve with the new page", async () => {
+    const { result, rerender } = renderHook(
+      ({ page }) => useCharacters({ name: "", page, pageSize: 4 }),
+      {
+        initialProps: { page: 1 },
+      },
+    );
+
+    await waitFor(() => expect(result.current.status).toBe("success"));
+
+    rerender({ page: 2 });
+    expect(result.current.status).toBe("loading");
+
+    await waitFor(() => expect(result.current.status).toBe("success"));
+    expect(result.current.status).toBe("success");
+    if (result.current.status === "success") {
+      expect(result.current.characters).toEqual(allCharacters.slice(4, 8));
+    }
   });
 
   it("should report an error status when the request fails", async () => {
@@ -32,7 +75,9 @@ describe("useCharacters", () => {
       ),
     );
 
-    const { result } = renderHook(() => useCharacters());
+    const { result } = renderHook(() =>
+      useCharacters({ name: "", page: 1, pageSize: 4 }),
+    );
 
     await waitFor(() => expect(result.current.status).toBe("error"));
   });

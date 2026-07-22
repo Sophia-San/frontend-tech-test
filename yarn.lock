@@ -1610,6 +1610,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/user-event@npm:^14.6.1":
+  version: 14.6.1
+  resolution: "@testing-library/user-event@npm:14.6.1"
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 4cb8a81fea1fea83a42619e9545137b51636bb7a3182c596bb468e5664f1e4699a275c2d0fb8b6dcc3fe2684f9d87b0637ab7cb4f566051539146872c9141fcb
+  languageName: node
+  linkType: hard
+
 "@tybys/wasm-util@npm:^0.10.3":
   version: 0.10.3
   resolution: "@tybys/wasm-util@npm:0.10.3"
@@ -3388,6 +3397,7 @@ __metadata:
     "@testing-library/dom": ^10.4.1
     "@testing-library/jest-dom": ^7.0.0
     "@testing-library/react": ^16.3.2
+    "@testing-library/user-event": ^14.6.1
     "@types/react": ^19.2.2
     "@types/react-dom": ^19.2.2
     "@vitejs/plugin-react": ^5.0.4
