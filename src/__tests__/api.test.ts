@@ -15,15 +15,23 @@ describe("getCharacters", () => {
     expect(response.previous).toBeNull();
   });
 
-  it("should filter characters whose name contains the search term, case-insensitively", async () => {
+  it("should filter characters whose name starts with the search term, case-insensitively", async () => {
     const expected = allCharacters.filter((character) =>
-      character.name.toLowerCase().includes("han"),
+      character.name.toLowerCase().startsWith("han"),
     );
 
     const response = await getCharacters({ name: "HAN" });
 
     expect(response.results).toEqual(expected);
     expect(response.total).toBe(expected.length);
+  });
+
+  it("should not match a search term that only appears in the middle of a name", async () => {
+    // "Han Solo" contains "olo" but doesn't start with it.
+    const response = await getCharacters({ name: "olo" });
+
+    expect(response.results).toEqual([]);
+    expect(response.total).toBe(0);
   });
 
   it("should paginate results according to page and limit", async () => {

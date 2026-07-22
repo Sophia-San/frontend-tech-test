@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { http, HttpResponse } from "msw";
 import { MemoryRouter } from "react-router-dom";
 
+import { server } from "../__mocks/server";
 import { allCharacters } from "../__mocks/data";
 import { PAGE_SIZE } from "../constants";
 import { AppRoutes } from "../components/AppRoutes";
@@ -80,6 +82,33 @@ describe("AppRoutes", () => {
 
   it("should keep the current search term when navigating pages", async () => {
     const user = userEvent.setup();
+
+    // Override with a fixed dataset spanning 2 pages: the mock data has no name
+    // prefix shared by more than PAGE_SIZE characters, so a real filter wouldn't
+    // reliably produce a "Page 2" button to click here.
+    const characters = Array.from({ length: PAGE_SIZE + 2 }, (_, index) => ({
+      id: index + 1,
+      name: `Character ${index + 1}`,
+      affiliations: [],
+    }));
+    server.use(
+      http.get("/api/characters", ({ request }) => {
+        const url = new URL(request.url);
+        const page = Number(url.searchParams.get("page")) || 1;
+        const limit = Number(url.searchParams.get("limit")) || PAGE_SIZE;
+        const start = (page - 1) * limit;
+
+        return HttpResponse.json({
+          results: characters.slice(start, start + limit),
+          total: characters.length,
+          page,
+          limit,
+          next: start + limit < characters.length ? "next" : null,
+          previous: page > 1 ? "previous" : null,
+        });
+      }),
+    );
+
     renderAppRoutes("/?name=o");
 
     await waitFor(() =>
