@@ -1,0 +1,16 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 0;
+}
+
+.pageButton {
+  min-width: 40px;
+}
+
+.ellipsis {
+  padding: 0 4px;
+  color: #767676;
+}

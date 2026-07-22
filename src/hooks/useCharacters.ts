@@ -3,28 +3,58 @@ import { useEffect, useState } from "react";
 import { getCharacters } from "../api";
 import { Character } from "../types/character";
 
-export type UseCharactersResult =
+interface UseCharactersParams {
+  name: string;
+  page: number;
+  pageSize: number;
+}
+
+type UseCharactersResult =
   | { status: "loading" }
-  | { status: "success"; characters: Character[] }
+  | {
+      status: "success";
+      characters: Character[];
+      total: number;
+      totalPages: number;
+    }
   | { status: "error" };
 
-export const useCharacters = (): UseCharactersResult => {
-  const [result, setResult] = useState<UseCharactersResult>({
-    status: "loading",
-  });
+type FetchResult =
+  | {
+      params: string;
+      status: "success";
+      characters: Character[];
+      total: number;
+      totalPages: number;
+    }
+  | { params: string; status: "error" };
+
+export const useCharacters = ({
+  name,
+  page,
+  pageSize,
+}: UseCharactersParams): UseCharactersResult => {
+  const [result, setResult] = useState<FetchResult | null>(null);
+  const params = JSON.stringify({ name, page, pageSize });
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       try {
-        const response = await getCharacters();
+        const response = await getCharacters({ name, page, limit: pageSize });
         if (!cancelled) {
-          setResult({ status: "success", characters: response.results });
+          setResult({
+            params,
+            status: "success",
+            characters: response.results,
+            total: response.total,
+            totalPages: Math.ceil(response.total / pageSize),
+          });
         }
       } catch {
         if (!cancelled) {
-          setResult({ status: "error" });
+          setResult({ params, status: "error" });
         }
       }
     })();
@@ -32,7 +62,20 @@ export const useCharacters = (): UseCharactersResult => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [name, page, pageSize, params]);
 
-  return result;
+  if (!result || result.params !== params) {
+    return { status: "loading" };
+  }
+
+  if (result.status === "error") {
+    return { status: "error" };
+  }
+
+  return {
+    status: "success",
+    characters: result.characters,
+    total: result.total,
+    totalPages: result.totalPages,
+  };
 };
