@@ -1,20 +1,17 @@
 {
-    "compilerOptions": {
-        "allowJs": true,
-        "esModuleInterop": true,
-        "jsx": "react",
-        "lib": ["es2020", "dom"],
-        "module": "esnext",
-        "moduleResolution": "node",
-        "noEmit": true,
-        "resolveJsonModule": true,
-        "strict": true,
-        "skipLibCheck": true,
-        "target": "ES2018",
-        "types": ["jest", "gapi", "google.picker"],
-        "downlevelIteration": true
-    },
-    "include": [
-        "src",
-    ],
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["es2020", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "ES2018",
+    "downlevelIteration": true
+  },
+  "include": ["src"]
 }

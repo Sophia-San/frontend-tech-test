@@ -1,0 +1,41 @@
+name: "CI: lint, typecheck & tests"
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+          cache: "yarn"
+      - run: yarn install --immutable
+      - run: yarn lint
+
+  typecheck:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+          cache: "yarn"
+      - run: yarn install --immutable
+      - run: yarn tsc --noEmit
+
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.11.1"
+          cache: "yarn"
+      - run: yarn install --immutable
+      - run: yarn test --run
