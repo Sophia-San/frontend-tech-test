@@ -1,5 +1,5 @@
 import { setupWorker } from "msw/browser";
-import { handlers } from ".";
+import { handlers } from "./handlers";
 
 // This is the Service Worker instance
 export const worker = setupWorker(...handlers);
