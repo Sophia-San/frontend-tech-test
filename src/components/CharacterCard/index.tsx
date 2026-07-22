@@ -1,3 +1,5 @@
+import { SkeletonRectangle } from "@lumx/react";
+
 import { Character, Reaction } from "../../types/character";
 
 import styles from "./CharacterCard.module.scss";
@@ -5,9 +7,14 @@ import styles from "./CharacterCard.module.scss";
 interface CharacterCardProps {
   character: Character;
   reactions: Reaction[];
+  reactionsLoading?: boolean;
 }
 
-export const CharacterCard = ({ character, reactions }: CharacterCardProps) => {
+export const CharacterCard = ({
+  character,
+  reactions,
+  reactionsLoading = false,
+}: CharacterCardProps) => {
   const { name, description, species, birthYear, affiliations, imageUrl } =
     character;
 
@@ -40,14 +47,27 @@ export const CharacterCard = ({ character, reactions }: CharacterCardProps) => {
           </ul>
         )}
 
-        {reactions.length > 0 && (
-          <ul className={styles.reactions} aria-label={`${name}'s reactions`}>
-            {reactions.map((reaction) => (
-              <li key={reaction.id} className={styles.reaction}>
-                <span aria-hidden="true">{reaction.content}</span>
+        {reactionsLoading ? (
+          <ul className={styles.reactions} aria-hidden="true">
+            {Array.from({ length: 2 }, (_, index) => (
+              <li key={index}>
+                <SkeletonRectangle variant="pill" width="s" height="s" />
               </li>
             ))}
           </ul>
+        ) : (
+          reactions.length > 0 && (
+            <ul
+              className={styles.reactions}
+              aria-label={`${name}'s reactions`}
+            >
+              {reactions.map((reaction) => (
+                <li key={reaction.id} className={styles.reaction}>
+                  <span aria-hidden="true">{reaction.content}</span>
+                </li>
+              ))}
+            </ul>
+          )
         )}
       </div>
     </article>

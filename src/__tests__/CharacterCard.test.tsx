@@ -91,4 +91,22 @@ describe("CharacterCard", () => {
       screen.queryByRole("list", { name: "Han Solo's reactions" }),
     ).not.toBeInTheDocument();
   });
+
+  it("should render reaction placeholders instead of the real reactions while loading", () => {
+    const { container } = render(
+      <CharacterCard
+        character={baseCharacter}
+        reactions={reactions}
+        reactionsLoading
+      />,
+    );
+
+    expect(
+      screen.queryByRole("list", { name: "Han Solo's reactions" }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("⭐")).not.toBeInTheDocument();
+    expect(
+      container.querySelectorAll(".lumx-skeleton-rectangle"),
+    ).toHaveLength(2);
+  });
 });

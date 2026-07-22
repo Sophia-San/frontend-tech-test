@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 
 import { server } from "../__mocks/server";
 import { allCharacters } from "../__mocks/data";
@@ -100,6 +100,56 @@ describe("Content", () => {
     await waitFor(() =>
       expect(screen.getByText("1 result found")).toBeInTheDocument(),
     );
+  });
+
+  it("should show reaction placeholders until reactions resolve, without blocking the character list", async () => {
+    server.use(
+      http.get("/api/reactions", async () => {
+        await delay(50);
+        return HttpResponse.json({ reactions: [] });
+      }),
+    );
+
+    const { container } = render(
+      <Content name="" page={1} pageSize={4} onPageChange={noop} />,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("heading", { name: allCharacters[0].name }),
+      ).toBeInTheDocument(),
+    );
+
+    expect(
+      container.querySelectorAll(".lumx-skeleton-rectangle"),
+    ).not.toHaveLength(0);
+
+    await waitFor(() =>
+      expect(
+        container.querySelectorAll(".lumx-skeleton-rectangle"),
+      ).toHaveLength(0),
+    );
+  });
+
+  it("should show an error message when reactions fail to load, without blocking the character list", async () => {
+    server.use(
+      http.get(
+        "/api/reactions",
+        () => new HttpResponse(null, { status: 500 }),
+      ),
+    );
+
+    render(<Content name="" page={1} pageSize={4} onPageChange={noop} />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("Something went wrong while loading reactions."),
+      ).toBeInTheDocument(),
+    );
+
+    expect(
+      screen.getByRole("heading", { name: allCharacters[0].name }),
+    ).toBeInTheDocument();
   });
 
   it("should attach the matching reactions to each character", async () => {

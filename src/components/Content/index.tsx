@@ -33,6 +33,8 @@ export const Content = ({
     total = 0,
     totalPages = 0,
   } = charactersStatus === "success" ? charactersResult : {};
+  const isReactionsLoading = reactionsResult.status === "loading";
+  const isReactionsError = reactionsResult.status === "error";
   const { reactionsByCharacterId = null } =
     reactionsResult.status === "success" ? reactionsResult : {};
 
@@ -55,6 +57,9 @@ export const Content = ({
               {total} {total > 1 ? "results" : "result"} found
             </p>
           )}
+        {isReactionsError && (
+          <p role="alert">Something went wrong while loading reactions.</p>
+        )}
       </div>
 
       <ul className={styles.list}>
@@ -72,6 +77,7 @@ export const Content = ({
               reactions={
                 reactionsByCharacterId?.get(character.id) ?? NO_REACTIONS
               }
+              reactionsLoading={isReactionsLoading}
             />
           </li>
         ))}
